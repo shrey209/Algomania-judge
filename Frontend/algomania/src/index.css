@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+background-color:#F5F5F5;
+}
+
+  
+  /* Filter.css */
+.filter-section {
+    height: calc(100vh - 80px); /* Adjust the height as needed */
+    overflow-y: auto; /* Add vertical scrollbar */
+    padding: 20px; /* Add padding for better appearance */
+  }
+  .bg-purple-700 {
+    background-color: #6b46c1; /* Adjust the background color as needed */
+  }
+  
+  .text-purple-600 {
+    color: #805ad5; /* Adjust the text color as needed */
+  }
+  
+  .hover\:bg-purple-600:hover {
+    background-color: #805ad5; /* Adjust the hover background color as needed */
+  }
+  
+  .hover\:bg-purple-600:hover {
+    color: #ffffff; /* Adjust the hover text color as needed */
+  }
