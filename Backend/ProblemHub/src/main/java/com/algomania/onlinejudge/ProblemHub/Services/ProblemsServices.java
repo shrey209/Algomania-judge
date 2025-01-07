@@ -1,13 +1,21 @@
 package com.algomania.onlinejudge.ProblemHub.Services;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
 import com.algomania.onlinejudge.ProblemHub.Entity.Problems;
 import com.algomania.onlinejudge.ProblemHub.Repository.ProblemsRepository;
+
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.Predicate;
 
 @Service
 public class ProblemsServices {
@@ -42,55 +50,63 @@ public class ProblemsServices {
     
     // GET all problems by category id
     public Page<Problems> findProblemsByDifficultyAndCategoryExcludingIds(
-            List<Integer> difficultyIds, List<Integer> categoryIds, List<Integer> excludedProblemIds, int page) {
+            List<Integer> difficultyIds,
+            List<Integer> categoryIds,
+            boolean isSolved,
+            String userId,
+            int page) {
         Pageable pageable = PageRequest.of(page - 1, DEFAULT_PAGE_SIZE);
-
-        // Case: All three arrays are empty
-        if (difficultyIds.isEmpty() && categoryIds.isEmpty() && excludedProblemIds.isEmpty()) {
-            return problemsRepository.findAll(pageable);
+        
+        if(isSolved==true) {
+        	 String url = "http://localhost:8010/users/{userId}/problems";
+        	  RestTemplate restTemplate = new RestTemplate();
+        	  List<Integer> problemIdsList = restTemplate.getForObject(url, List.class, userId);
+        	  System.out.println("Response: " + problemIdsList);
+        	  
+        	  Page<Problems>result = problemsRepository.findAll((Specification<Problems>) (root, query, cb) -> {
+        		  List<Predicate> predicates = new ArrayList<>();
+        		  
+        		  if(Objects.nonNull(difficultyIds) && !difficultyIds.isEmpty()) {
+        			  predicates.add(root.get("difficultyId").in(difficultyIds));
+        		  }
+        		  if (Objects.nonNull(categoryIds) && !categoryIds.isEmpty()) {
+       
+        		        predicates.add(root.get("categoryId").in(categoryIds));
+        		    }
+        		  
+        		  if (Objects.nonNull(problemIdsList) && !problemIdsList.isEmpty()) {
+        			    predicates.add(cb.not(root.get("Id").in(problemIdsList)));
+        			}
+        		  
+        		  return cb.and(predicates.toArray(new Predicate[0]));
+        	  },pageable);  
+        	  return result;
         }
-
-        // Case: difficultyIds and categoryIds are empty but excludedProblemIds is not
-        if (difficultyIds.isEmpty() && categoryIds.isEmpty() && !excludedProblemIds.isEmpty()) {
-            return problemsRepository.findByIdNotIn(excludedProblemIds, pageable);
+        else {
+        	 Page<Problems>result = problemsRepository.findAll((Specification<Problems>) (root, query, cb) -> {
+       		  List<Predicate> predicates = new ArrayList<>();
+       		  
+       		  if(Objects.nonNull(difficultyIds) && !difficultyIds.isEmpty()) {
+       			  predicates.add(root.get("difficultyId").in(difficultyIds));
+       		  }
+       		  if (Objects.nonNull(categoryIds) && !categoryIds.isEmpty()) {
+      
+       		        predicates.add(root.get("categoryId").in(categoryIds));
+       		    }
+     
+       		  return cb.and(predicates.toArray(new Predicate[0]));
+       	  },pageable);  
+        	 return result;
         }
-
-        // Case: difficultyIds is empty but categoryIds and excludedProblemIds are not
-        if (difficultyIds.isEmpty() && !categoryIds.isEmpty() && !excludedProblemIds.isEmpty()) {
-            return problemsRepository.findByCategoryIdInAndIdNotIn(categoryIds, excludedProblemIds, pageable);
+    }
+    
+    public List<Problems> searchByTitle(String search) {
+        if (search.length() > 4) {
+            String capitalizedSearch = search.substring(0, 1).toUpperCase() + search.substring(1);
+            return problemsRepository.findByTitleContaining(capitalizedSearch);
+        } else {
+            throw new IllegalArgumentException("Search string must be greater than 4 characters");
         }
-
-        // Case: categoryIds is empty but difficultyIds and excludedProblemIds are not
-        if (!difficultyIds.isEmpty() && categoryIds.isEmpty() && !excludedProblemIds.isEmpty()) {
-            return problemsRepository.findByDifficultyIdInAndIdNotIn(difficultyIds, excludedProblemIds, pageable);
-        }
-
-        // Case: Only difficultyIds provided
-        if (!difficultyIds.isEmpty() && categoryIds.isEmpty() && excludedProblemIds.isEmpty()) {
-            return problemsRepository.findByDifficultyIdIn(difficultyIds, pageable);
-        }
-
-        // Case: Only categoryIds provided
-        if (difficultyIds.isEmpty() && !categoryIds.isEmpty() && excludedProblemIds.isEmpty()) {
-            return problemsRepository.findByCategoryIdIn(categoryIds, pageable);
-        }
-
-        // Case: Only excludedProblemIds provided
-        if (difficultyIds.isEmpty() && categoryIds.isEmpty() && !excludedProblemIds.isEmpty()) {
-            return problemsRepository.findByIdNotIn(excludedProblemIds, pageable);
-        }
-
-        // Case: difficultyIds and categoryIds provided
-        if (!difficultyIds.isEmpty() && !categoryIds.isEmpty() && excludedProblemIds.isEmpty()) {
-            return problemsRepository.findByDifficultyIdInAndCategoryIdIn(difficultyIds, categoryIds, pageable);
-        }
-
-        // Case: difficultyIds, categoryIds, and excludedProblemIds provided
-        if (!difficultyIds.isEmpty() && !categoryIds.isEmpty() && !excludedProblemIds.isEmpty()) {
-            return problemsRepository.findByDifficultyIdInAndCategoryIdInAndIdNotIn(difficultyIds, categoryIds, excludedProblemIds, pageable);
-        }
-
-        throw new IllegalArgumentException("Unexpected case");
     }
 
 

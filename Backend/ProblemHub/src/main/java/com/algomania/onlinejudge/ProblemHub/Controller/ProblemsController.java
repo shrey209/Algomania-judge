@@ -78,7 +78,7 @@ public class ProblemsController {
             @RequestBody ProblemsFilterDTO filterDTO) {
 System.out.println(filterDTO);
         Page<Problems> problemsPage = problemsServices.findProblemsByDifficultyAndCategoryExcludingIds(
-                filterDTO.getDifficultyIds(), filterDTO.getCategoryIds(), filterDTO.getExcludedIds(), filterDTO.getPage());
+                filterDTO.getDifficultyIds(), filterDTO.getCategoryIds(), filterDTO.isSolved(),filterDTO.getUserId(), filterDTO.getPage());
         
        
             return ResponseEntity.ok(problemsPage);
@@ -94,5 +94,8 @@ System.out.println(filterDTO);
         return ResponseEntity.ok(problemsPage);
     }
     
-    
+    @GetMapping("/searchByTitle")
+    public List<Problems> searchByTitle(@RequestParam String title) {
+        return problemsServices.searchByTitle(title);
+    }
 }
