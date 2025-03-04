@@ -21,6 +21,6 @@ spring:
         register: true  # Ensures this service registers itself in Consul
 
 server:
-  port: 8080
+  port: 8000
 
 
