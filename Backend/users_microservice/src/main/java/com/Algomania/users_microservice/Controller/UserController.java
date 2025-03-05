@@ -39,17 +39,19 @@ public class UserController {
             @ApiResponse(responseCode = "201", description = "User successfully created")
     })
     @PostMapping("/add")
-    public Mono<User> saveUser(@RequestBody dto dtos) {
+    public Mono<String> saveUser(@RequestBody dto dtos) {
+    	System.out.println("hit");
         User user = User.builder()
-                .firstname(dtos.getFirstname())
-                .lastname(dtos.getLastname())
+                .name(dtos.getName())
                 .mediumCount(0)
                 .hardCount(0)
                 .easyCount(0)
                 .solvedProblemsId(Collections.emptySet())
                 .todoproblems(Collections.emptySet())
                 .build();
-        return userService.saveUser(user);
+        
+        return userService.saveUser(user)
+                .map(savedUser -> savedUser.getId()); 
     }
 
     @Operation(summary = "Increment Easy Problem Count", description = "Increment the count of easy problems solved by the user.")

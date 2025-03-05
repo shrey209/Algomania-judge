@@ -20,9 +20,7 @@ public class User {
     @Id
     private String id;  
     
-     private String firstname;
-     
-    private String  lastname;
+     private String name;
 
 
     private int hardCount;

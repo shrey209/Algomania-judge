@@ -19,6 +19,7 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
+    
     public Flux<User> getAllUsers() {
         return userRepository.findAll();
     }

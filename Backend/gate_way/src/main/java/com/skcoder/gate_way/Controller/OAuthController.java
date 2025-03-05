@@ -50,25 +50,28 @@ public class OAuthController {
         return fetchAccessToken(code)
             .flatMap(this::fetchGitHubUserInfo)
             .flatMap(userInfo -> {
-                if (userInfo == null || !userInfo.containsKey("id")) {
+                if (userInfo == null || !userInfo.containsKey("login")) {
                     return Mono.just(ResponseEntity.badRequest().build());
                 }
 
                 String username = (String) userInfo.get("login");
-                User user = authService.registerOauthUser(username, "GITHUB");
-                String jwt = JwtUtil.generateToken(username, user.getRoles(), user.getId());
+                return authService.getUserByUsername(username, "GITHUB")
+                    .switchIfEmpty(authService.registerOauthUser(username,"GITHUB", ""))
+                    .flatMap(user -> {
+                        String jwt = JwtUtil.generateToken(username, user.getRole(), user.getId());
+                        System.out.println(jwt);
+                        exchange.getResponse().addCookie(ResponseCookie.from("jwt", jwt)
+                                .httpOnly(true)
+                                .secure(true)
+                                .path("/")
+                                .maxAge(7 * 24 * 60 * 60)
+                                .sameSite("None")
+                                .build());
 
-                exchange.getResponse().addCookie(ResponseCookie.from("jwt", jwt)
-                        .httpOnly(true)
-                        .secure(true)
-                        .path("/")
-                        .maxAge(7 * 24 * 60 * 60)
-                        .sameSite("None")
-                        .build());
-
-                return Mono.just(ResponseEntity.status(HttpStatus.FOUND)
-                        .location(URI.create(frontendRedirectUri))
-                        .build());
+                        return Mono.just(ResponseEntity.status(HttpStatus.FOUND)
+                                .location(URI.create(frontendRedirectUri))
+                                .build());
+                    });
             })
             .doOnError(Throwable::printStackTrace);
     }

@@ -10,6 +10,5 @@ import lombok.NoArgsConstructor;
 public class dto {
 
 
-	String firstname;
-	String lastname;
+	String name;
 }

@@ -16,7 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 public class SubmissionsController {
 
-    private final SubmissionServices submissionServices;
+     SubmissionServices submissionServices;
 
     @GetMapping("/user/{userId}/problem/{problemid}")
     public ResponseEntity<List<Submissions>> getAllSubmissions(@PathVariable String userId, @PathVariable int problemid) {
