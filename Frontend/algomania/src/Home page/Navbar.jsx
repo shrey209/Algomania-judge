@@ -1,9 +1,11 @@
+import { useState } from 'react';
 import { Fragment } from 'react';
 import { Disclosure } from '@headlessui/react';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/context'; // Import the useAuth hook
 import logo from '../images/logo.png'; // Import the logo
+import SignInModal from '../SignIn/SignInModal';
 
 const navigation = [
   { name: 'Algomania', href: '#', current: true },
@@ -17,9 +19,10 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
 
-export default function Example() {
+export default function Navbar() {
   const navigate = useNavigate();
-  const { login } = useAuth(); // Use useAuth hook to get login state
+  const { isAuthenticated } = useAuth();
+  const [isSignInOpen, setIsSignInOpen] = useState(false);
 
   return (
     <Disclosure as="nav" className="bg-white">
@@ -40,9 +43,7 @@ export default function Example() {
               </div>
               <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
                 <div className="flex flex-shrink-0 items-center">
-                  <div>
-                    <img className="w-16" src={logo} alt="Logo" />
-                  </div>
+                  <img className="w-16" src={logo} alt="Logo" />
                 </div>
                 <div className="hidden sm:ml-6 sm:block">
                   <div className="flex space-x-4">
@@ -51,7 +52,9 @@ export default function Example() {
                         key={item.name}
                         href={item.href}
                         className={classNames(
-                          item.current ? 'bg-purple-500 text-white shadow-lg' : 'text-gray-900 hover:bg-gray-200 hover:text-black shadow-lg',
+                          item.current
+                            ? 'bg-purple-500 text-white shadow-lg'
+                            : 'text-gray-900 hover:bg-gray-200 hover:text-black shadow-lg',
                           'rounded-md px-3 py-2 text-base font-medium' // Increased font size to text-base
                         )}
                         aria-current={item.current ? 'page' : undefined}
@@ -63,26 +66,28 @@ export default function Example() {
                 </div>
               </div>
               <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-                {login ? (
-                  <button
-                    type="button"
-                    onClick={() => navigate('/Dashboard')}
-                    className="text-white bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 shadow-lg"
-                  >
-                    Dashboard
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() => navigate('/signin')}
-                    className="text-white bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 shadow-lg"
-                  >
-                    Sign in
-                  </button>
-                )}
+              {isAuthenticated ? (
+  <button
+    type="button"
+    onClick={() => navigate('/Dashboard')}
+    className="text-white bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 shadow-lg"
+  >
+    Dashboard
+  </button>
+) : (
+  <button
+    type="button"
+    onClick={() => setIsSignInOpen(true)}
+    className="text-white bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 shadow-lg"
+  >
+    Sign in
+  </button>
+)}
               </div>
             </div>
           </div>
+
+          <SignInModal isOpen={isSignInOpen} onClose={() => setIsSignInOpen(false)} />
 
           <Disclosure.Panel className="sm:hidden">
             <div className="space-y-1 px-2 pb-3 pt-2">
@@ -92,7 +97,9 @@ export default function Example() {
                   as="a"
                   href={item.href}
                   className={classNames(
-                    item.current ? 'bg-purple-500 text-white shadow-lg' : 'text-gray-900 hover:bg-gray-200 hover:text-black shadow-lg',
+                    item.current
+                      ? 'bg-purple-500 text-white shadow-lg'
+                      : 'text-gray-900 hover:bg-gray-200 hover:text-black shadow-lg',
                     'block rounded-md px-3 py-2 text-base font-medium' // Increased font size to text-base
                   )}
                   aria-current={item.current ? 'page' : undefined}

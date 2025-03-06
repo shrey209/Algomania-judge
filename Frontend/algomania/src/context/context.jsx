@@ -1,57 +1,46 @@
-// AuthContext.jsx
+import { createContext, useContext, useEffect, useState } from "react";
 
-import React, { createContext, useState, useContext, useEffect } from 'react';
-
-const AuthContext = createContext();
-
-export const useAuth = () => {
-  return useContext(AuthContext);
-};
+// Create Auth Context
+const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [login, setLogin] = useState(() => {
-    return JSON.parse(localStorage.getItem('login')) || false;
-  });
+    const [isAuthenticated, setIsAuthenticated] = useState(null); // Null = loading state
 
-  const [jwt, setJwt] = useState(() => {
-    return localStorage.getItem('jwt') || null;
-  });
+    // Function to check if user is authenticated
+    const checkAuthStatus = async () => {
+        console.log("🔄 Checking authentication status...");
 
-  const [userid, setUserid] = useState(() => {
-    return localStorage.getItem('userid') || null;
-  });
+        try {
+            const response = await fetch("http://localhost:8000/authv1/test", {
+                credentials: "include", // Ensures cookies are sent with the request
+            });
 
-  const [Globalusername, setGlobalUsername] = useState(() => {
-    return localStorage.getItem('Globalusername') || null;
-  });
+            console.log("✅ Response received from backend:", response);
 
-  const [userinformation, setUserinformation] = useState(() => {
-    return JSON.parse(localStorage.getItem('userinformation')) || {};
-  });
+            if (response.ok) {
+                console.log("✅ User is authenticated!");
+                setIsAuthenticated(true);
+            } else {
+                console.log("❌ User is NOT authenticated!");
+                setIsAuthenticated(false);
+            }
+        } catch (error) {
+            console.error("🚨 Error while checking auth status:", error);
+            setIsAuthenticated(false);
+        }
+    };
 
-  useEffect(() => {
-    localStorage.setItem('login', JSON.stringify(login));
-  }, [login]);
+    // 🔥 Check authentication on every page load
+    useEffect(() => {
+        checkAuthStatus();
+    }, []);
 
-  useEffect(() => {
-    localStorage.setItem('jwt', jwt);
-  }, [jwt]);
-
-  useEffect(() => {
-    localStorage.setItem('userid', userid);
-  }, [userid]);
-
-  useEffect(() => {
-    localStorage.setItem('Globalusername', Globalusername);
-  }, [Globalusername]);
-
-  useEffect(() => {
-    localStorage.setItem('userinformation', JSON.stringify(userinformation));
-  }, [userinformation]);
-
-  return (
-    <AuthContext.Provider value={{ login, setLogin, jwt, setJwt, userid, setUserid, Globalusername, setGlobalUsername, userinformation, setUserinformation }}>
-      {children}
-    </AuthContext.Provider>
-  );
+    return (
+        <AuthContext.Provider value={{ isAuthenticated, checkAuthStatus }}>
+            {children}
+        </AuthContext.Provider>
+    );
 };
+
+// Hook to use Auth Context
+export const useAuth = () => useContext(AuthContext);

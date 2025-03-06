@@ -22,7 +22,7 @@ public class AuthService {
     
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     
-    String urlString = "http://localhost:8010/users/add";  // ✅ Add "http://"
+    String urlString = "http://localhost:8012/users/add";  // ✅ Add "http://"
 
 
     public Mono<User> getUserByUsername(String username, String provider) {

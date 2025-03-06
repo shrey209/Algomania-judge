@@ -18,6 +18,7 @@
     "chart.js": "^4.4.3",
     "codemirror": "^6.0.1",
     "lodash.debounce": "^4.0.8",
+    "lucide-react": "^0.477.0",
     "prismjs": "^1.29.0",
     "react": "^18.3.1",
     "react-ace": "^11.0.1",

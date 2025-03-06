@@ -13,7 +13,7 @@ import java.util.Map;
 @Service
 public class JwtService {
 
-    private static final String SECRET_KEY = "supersecretkey1234567890supersecretkey";
+	 private static final String SECRET_KEY = "supersecretkey1234567890supersecretkey!!!"; 
     private final SecretKey secretKey = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
 
    

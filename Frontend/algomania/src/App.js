@@ -7,10 +7,9 @@ import Contest from './components/contest';
 import Home from './Home page/Home';
 import Editor from './Code Editor page/Editor';
 import ProblemDetails from './ProblemDetails/ProblemDetails';
-import Signup from './sign up page/signup';
-import SignIn from './Sign in page/SignIn';
+
 import Dashboard from './Dashboard/Dashboard';
-import { AuthProvider } from './context/context';
+import { AuthProvider } from "./context/context";
 
 function App() {
   return (
@@ -23,8 +22,6 @@ function App() {
           <Route path="/Contest" element={<Contest />} />
           <Route path="/Editor" element={<Editor />} />
           <Route path="/problemDetails/:id" element={<ProblemDetails />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/signin" element={<SignIn />} />
           <Route path="/Dashboard" element={<Dashboard />} />
         </Routes>
       </AuthProvider>

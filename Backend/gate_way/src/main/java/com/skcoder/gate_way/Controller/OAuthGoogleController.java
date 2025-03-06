@@ -62,9 +62,9 @@ public class OAuthGoogleController {
                     return authService.getUserByEmail(email)
                             .switchIfEmpty(authService.registerOauthUser(username, "GOOGLE", email)) 
                             .flatMap(user -> {
-                                String jwt = JwtUtil.generateToken(username, user.getRole(), user.getId());
+                                String jwt = JwtUtil.generateToken(username, user.getRole(), user.getUserId());
 
-                               
+                               System.out.println(jwt);
                                 ResponseCookie jwtCookie = ResponseCookie.from("jwt", jwt)
                                         .httpOnly(true)
                                         .secure(true)

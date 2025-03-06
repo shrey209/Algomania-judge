@@ -1,15 +1,11 @@
-
-server:
-  port: 8010
-
 spring:
   application:
-    name: user-service
+    name: user-service  # Must match API Gateway route
 
-  cloud:
-    consul:
-      host: 20.197.20.39 # If running on a different machine, update this
-      port: 8500
-      discovery:
-        enabled: true
-        register: true  # Ensures this service registers itself in Consul
+server:
+  port: 8012
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/

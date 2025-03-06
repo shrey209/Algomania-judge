@@ -6,15 +6,21 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.server.ServerHttpRequest;
+import org.springframework.web.server.ServerWebExchange;
+
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.Collections;
 
+
 @RestController
 @RequestMapping("/users")
-@CrossOrigin(origins = "http://localhost:3000")
 public class UserController {
 
     private final UserService userService;
@@ -24,14 +30,14 @@ public class UserController {
         this.userService = userService;
     }
 
-    @Operation(summary = "Get User by ID", description = "Retrieve a user by their unique ID.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully retrieved the user"),
-            @ApiResponse(responseCode = "404", description = "User not found")
-    })
-    @GetMapping("/{id}")
-    public Mono<User> getUserById(@PathVariable String id) {
-        return userService.getUserById(id);
+    @GetMapping("/getuser")
+    public Mono<User> getUserById(@RequestHeader(value = "X-User-ID", required = false) String userId) {
+    	System.out.println("req was sent");
+        if (userId == null) {
+            return Mono.error(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User ID not found in headers"));
+        }
+        System.out.println(userId);
+        return userService.getUserById(userId);
     }
 
     @Operation(summary = "Add New User", description = "Create a new user with the provided data.")
