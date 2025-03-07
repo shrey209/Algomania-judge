@@ -9,30 +9,27 @@ import Solved from './solved';
 
 
 const Dashboard = () => {
-  const { userid, jwt , setUserinformation} = useAuth();
   const [userinfo, setUserinfo] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/users/${userid}`, {
-          headers: {
-            Authorization: `Bearer ${jwt}`
-          }
+        const response = await axios.get("http://localhost:8000/users/getuser", {
+          withCredentials: true, // Include cookies in the request
         });
+
+        console.log("User Info Response:", response.data); // Print response in console
         setUserinfo(response.data);
-        setUserinformation(response.data);
       } catch (error) {
-        console.error('Error fetching user information:', error);
+        console.error("Error fetching user information:", error);
       } finally {
         setLoading(false);
       }
     };
-  
-    fetchUserInfo(); // Call the function when component mounts or userid/jwt changes
-  }, [userid, jwt]); // useEffect dependencies: userid and jwt
 
+    fetchUserInfo();
+  }, []);
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -49,7 +46,8 @@ const Dashboard = () => {
         <div className="col-span-2 flex flex-col">
           <div className="flex-1 flex items-center justify-center">
             <div className="relative w-full">
-              <Bargraph easy={userinfo.easyCount} hard={userinfo.hardCount} medium={userinfo.mediumCount} />
+              {/* <Bargraph easy={userinfo.easyCount} hard={userinfo.hardCount} medium={userinfo.mediumCount} /> */}
+              <Bargraph easy={20} hard={5} medium={10} />
               <div className="absolute top-0 right-0 h-full flex flex-col justify-center space-y-4 p-4">
                 <Smallcard points={10} />
                 <Smallcard points={20} />
@@ -57,7 +55,7 @@ const Dashboard = () => {
             </div>
           </div>
           <div className="flex-1">
-            <Solved />
+            {/* <Solved /> */}
           </div>
         </div>
 

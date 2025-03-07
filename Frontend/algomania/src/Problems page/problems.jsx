@@ -39,7 +39,7 @@ const Problems = () => {
         </div>
         <div className="relative overflow-hidden">
           <div className="absolute inset-0 overflow-y-auto">
-            <DisplayProblem selectedCategoryIds={selectedCategoryIds} selectedDifficultyIds={selectedDifficultyIds} />
+            <DisplayProblem selectedCategoryIds={selectedCategoryIds} selectedDifficultyIds={selectedDifficultyIds} solved={solved} />
           </div>
         </div>
       </div>

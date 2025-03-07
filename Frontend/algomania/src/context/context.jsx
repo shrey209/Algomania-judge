@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import axios from "axios";
 
 // Create Auth Context
 const AuthContext = createContext(null);
@@ -11,19 +12,14 @@ export const AuthProvider = ({ children }) => {
         console.log("🔄 Checking authentication status...");
 
         try {
-            const response = await fetch("http://localhost:8000/authv1/test", {
-                credentials: "include", // Ensures cookies are sent with the request
+            const response = await axios.get("http://localhost:8000/authv1/test", {
+                withCredentials: true, // Ensures cookies are sent with the request
             });
 
-            console.log("✅ Response received from backend:", response);
+            console.log("✅ Response received from backend:", response.data);
 
-            if (response.ok) {
-                console.log("✅ User is authenticated!");
-                setIsAuthenticated(true);
-            } else {
-                console.log("❌ User is NOT authenticated!");
-                setIsAuthenticated(false);
-            }
+            // Backend directly returns true/false, so we set it as is
+            setIsAuthenticated(response.data);
         } catch (error) {
             console.error("🚨 Error while checking auth status:", error);
             setIsAuthenticated(false);

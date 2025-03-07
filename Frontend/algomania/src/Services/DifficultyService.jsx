@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'http://localhost:8080/Algomania';
+const BASE_URL = 'http://localhost:8000/Algomania';
 
 const DifficultyService = {
   getAllDifficulty: async () => {

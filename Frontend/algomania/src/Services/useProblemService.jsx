@@ -13,7 +13,7 @@ const useProblemService = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(`http://localhost:8080/Algomania/problem/page?page=${page}&size=${defaultSize}`);
+        const response = await axios.get(`http://localhost:8000/Algomania/problem/page?page=${page}&size=${defaultSize}`);
         const data = response.data;
         setProblems(prevProblems => [...prevProblems, ...data.content]);
         setHasMore(!data.last); 

@@ -9,8 +9,12 @@ const Filter = ({ setSelectedDifficultyIds, setSelectedCategoryIds, selectedCate
   const [categories, setCategories] = useState([]);
   const [tempSelectedDifficultyIds, setTempSelectedDifficultyIds] = useState([]);
   const [tempSelectedCategoryIds, setTempSelectedCategoryIds] = useState([]);
-  const { login } = useAuth();
+  const[tempSolved,setTempSolved]=useState(false)
+  const { isAuthenticated } = useAuth();
   
+  useEffect(() => {
+    setTempSolved(solved); 
+  }, [solved]);
 
   useEffect(() => {
     const fetchDifficulties = async () => {
@@ -48,12 +52,15 @@ const Filter = ({ setSelectedDifficultyIds, setSelectedCategoryIds, selectedCate
   };
 
   const handleSolvedChange = () => {
-    setSolved((prevSolved) => !prevSolved);
+    console.log("changing state")
+    setTempSolved((prevtempSolved)=>!prevtempSolved);
   };
 
   const handleApply = () => {
+    console.log("hit apply")
     setSelectedDifficultyIds(tempSelectedDifficultyIds);
     setSelectedCategoryIds(tempSelectedCategoryIds);
+    setSolved(tempSolved)
   };
 
   return (
@@ -65,14 +72,14 @@ const Filter = ({ setSelectedDifficultyIds, setSelectedCategoryIds, selectedCate
       >
         Apply
       </button>
-      {login && (
+      {isAuthenticated && (
         <div className="mb-6">
           <h3 className="text-xl font-semibold mb-2">Solved</h3>
           <label>
             <input
               type="checkbox"
               className="mr-2"
-              checked={solved}
+              checked={tempSolved}
               onChange={handleSolvedChange}
             />
             Solved

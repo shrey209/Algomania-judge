@@ -13,7 +13,7 @@ const DisplayProblem = ({ selectedCategoryIds, selectedDifficultyIds, solved }) 
   const [categories, setCategories] = useState({});
   const [problems, setProblems] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [solvedProblems, setSolvedProblems] = useState([]);
+  //const [solvedProblems, setSolvedProblems] = useState([]);
   const { userinformation } = useAuth();
   
   useEffect(() => {
@@ -41,25 +41,32 @@ const DisplayProblem = ({ selectedCategoryIds, selectedDifficultyIds, solved }) 
     fetchData();
   }, []);
 
-  useEffect(() => {
-    if (solved) {
-      setSolvedProblems(userinformation.solvedProblemsId || []);
-    } else {
-      setSolvedProblems([]);
-    }
-  }, [solved, userinformation]);
+  // useEffect(() => {
+  //   if (solved) {
+  //     setSolvedProblems(userinformation.solvedProblemsId || []);
+  //   } else {
+  //     setSolvedProblems([]);
+  //   }
+  // }, [solved, userinformation]);
 
   useEffect(() => {
     const fetchProblems = async () => {
       setLoading(true);
+      console.log(selectedDifficultyIds)
+      console.log(selectedCategoryIds)
+      console.log(solved)
 
       try {
         const response = await axios.post(BASE_URL, {
           difficultyIds: selectedDifficultyIds,
           categoryIds: selectedCategoryIds,
-          excludedIds: solvedProblems,
+          solved: solved,
           page: 1
-        });
+        },
+        {
+          withCredentials: true 
+        } 
+      );
 
         setProblems(response.data.content);
       } catch (error) {
@@ -70,7 +77,7 @@ const DisplayProblem = ({ selectedCategoryIds, selectedDifficultyIds, solved }) 
     };
 
     fetchProblems();
-  }, [selectedCategoryIds, selectedDifficultyIds]);
+  }, [selectedCategoryIds, selectedDifficultyIds,solved]);
 
   return (
     <div className="space-y-4">
