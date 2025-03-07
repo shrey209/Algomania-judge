@@ -58,7 +58,7 @@ public class OAuthController {
                 return authService.getUserByUsername(username, "GITHUB")
                     .switchIfEmpty(authService.registerOauthUser(username,"GITHUB", ""))
                     .flatMap(user -> {
-                        String jwt = JwtUtil.generateToken(username, user.getRole(), user.getId());
+                        String jwt = JwtUtil.generateToken(username, user.getRole(), user.getUserId());
                         System.out.println(jwt);
                         exchange.getResponse().addCookie(ResponseCookie.from("jwt", jwt)
                                 .httpOnly(true)

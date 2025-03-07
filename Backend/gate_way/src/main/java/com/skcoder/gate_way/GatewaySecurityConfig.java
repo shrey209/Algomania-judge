@@ -24,8 +24,27 @@ public class GatewaySecurityConfig {
             String path = exchange.getRequest().getURI().getPath();
             System.out.println("[DEBUG] WebFilter invoked for path: " + path);
 
+            
+            if (path.equals("/Algomania/problem/filter")) {
+            	System.out.println("invoked");
+                String token = extractTokenFromCookie(exchange);
+                if (token != null) {
+                    Map<String, Object> claims = jwtService.extractAllClaims(token);
+                    if (claims.containsKey("userId")) {
+                        String userId = String.valueOf(claims.get("userId"));
+                        System.out.println("[DEBUG] Authenticated User ID: " + userId);
+                        
+                        ServerWebExchange modifiedExchange = exchange.mutate()
+                            .request(builder -> builder.header("X-User-ID", userId))
+                            .build();
+                        return chain.filter(modifiedExchange);
+                    }
+                }
+                return chain.filter(exchange); // Proceed without modification if no token is found
+            }
+            
             // Only apply authentication for paths starting with "/users/getuser"
-            if (!path.startsWith("/users/getuser")) {
+            if (!path.startsWith("/users/")) {
                 System.out.println("[DEBUG] Skipping JWT check for path: " + path);
                 return chain.filter(exchange);
             }

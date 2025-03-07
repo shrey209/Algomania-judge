@@ -16,7 +16,15 @@ spring:
           uri: lb://user-service  
           predicates:
             - Path=/users/**
-
+        - id: leaderboard
+          uri: lb://LEADERBOARD
+          predicates:
+            - Path=/leaderboard/**
+        - id: testing
+          uri: lb://PROBLEMHUB
+          predicates:
+           - Path=/Algomania/**
+      
       globalcors:
         cors-configurations:
           '[/**]':
@@ -28,7 +36,7 @@ spring:
               - "*"
             allowCredentials: true
 
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka/
+#eureka:
+#  client:
+#    service-url:
+#      defaultZone: http://localhost:8761/eureka/
