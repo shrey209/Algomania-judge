@@ -6,10 +6,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.Algomania.Leaderboard.Services.LeaderboardService;
+import com.Algomania.Leaderboard.DTOS.TopScoreDTO;
 
 import java.util.List;
 import java.util.Set;
-import com.Algomania.Leaderboard.DTOS.TopScoreDTO;
+
 @RestController
 @RequestMapping("/leaderboard")
 public class LeaderboardController {
@@ -22,8 +23,8 @@ public class LeaderboardController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<String> addToLeaderboard(@RequestParam String userId) {
-        leaderboardService.addToLeaderboard(userId, 0);
+    public ResponseEntity<String> addToLeaderboard( @RequestParam String userId, @RequestParam String username) {
+        leaderboardService.addToLeaderboard(userId, username, 0);
         return ResponseEntity.status(HttpStatus.CREATED).body("User added to leaderboard successfully");
     }
 
@@ -33,38 +34,41 @@ public class LeaderboardController {
         return ResponseEntity.ok(topPlayers);
     }
 
-    @GetMapping("/rank/{userId}")
-    public ResponseEntity<Long> getRank(@PathVariable String userId) {
-        try {
-            Long rank = leaderboardService.getRank(userId);
-            if (rank == null) {
-                throw new Exception("User with id " + userId + " not found");
-            }
-            return ResponseEntity.ok(rank);
-        } catch (Exception ex) {
-            // Wrap the exception in ResponseEntity with NOT_FOUND status
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+    @GetMapping("/rank")
+    public ResponseEntity<Long> getRank( @RequestHeader(value = "X-User-ID", required = false) String userId, @RequestParam String username) {
+        Long rank = leaderboardService.getRank(userId, username);
+        if (rank == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(null);
         }
+        return ResponseEntity.ok(rank);
     }
 
-    @GetMapping("/score/{userId}")
-    public ResponseEntity<Double> getScore(@PathVariable String userId) {
-        Double score = leaderboardService.getScore(userId);
+    @GetMapping("/score")
+    public ResponseEntity<Double> getScore( @RequestHeader(value = "X-User-ID", required = false) String userId, @RequestParam String username) {
+        Double score = leaderboardService.getScore(userId, username);
+        if (score == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(null);
+        }
         return ResponseEntity.ok(score);
     }
-    
+
     @GetMapping("/top-scores/{count}")
     public ResponseEntity<List<TopScoreDTO>> getTopScores(@PathVariable int count) {
         List<TopScoreDTO> topScores = leaderboardService.getTopScores(count);
         return ResponseEntity.ok(topScores);
     }
-    
+
     @PostMapping("/increment-score")
-    public ResponseEntity<String> incrementUserScore(@RequestParam String userId, @RequestParam double incrementValue) {
-        leaderboardService.incrementUserScore(userId, incrementValue);
+    public ResponseEntity<String> incrementUserScore(
+    		 @RequestHeader(value = "X-User-ID", required = false) String userId, 
+            @RequestParam String username, 
+            @RequestParam double incrementValue) {
+        
+        leaderboardService.incrementUserScore(userId, username, incrementValue);
         return ResponseEntity.ok("Score for user " + userId + " incremented by " + incrementValue);
     }
 
     // Other endpoints for additional leaderboard operations (e.g., get scores, remove members, etc.)
 }
-

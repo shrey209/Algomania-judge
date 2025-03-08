@@ -1,4 +1,5 @@
 package com.Algomania.Leaderboard.Services;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
@@ -20,9 +21,9 @@ public class LeaderboardService {
         this.zSetOperations = redisTemplate.opsForZSet();
     }
 
-    public void addToLeaderboard(String userId, double score) {
+    public void addToLeaderboard(String userId, String username, double score) {
         String leaderboardKey = "leaderboard";
-        zSetOperations.add(leaderboardKey, userId, score);
+        zSetOperations.add(leaderboardKey, userId + ":" + username, score);
     }
 
     public Set<String> getTopPlayers(int count) {
@@ -30,14 +31,14 @@ public class LeaderboardService {
         return zSetOperations.reverseRange(leaderboardKey, 0, count - 1);
     }
 
-    public Long getRank(String userId) {
+    public Long getRank(String userId, String username) {
         String leaderboardKey = "leaderboard";
-        return zSetOperations.reverseRank(leaderboardKey, userId);
+        return zSetOperations.reverseRank(leaderboardKey, userId + ":" + username);
     }
 
-    public Double getScore(String userId) {
+    public Double getScore(String userId, String username) {
         String leaderboardKey = "leaderboard";
-        return zSetOperations.score(leaderboardKey, userId);
+        return zSetOperations.score(leaderboardKey, userId + ":" + username);
     }
 
     public List<TopScoreDTO> getTopScores(int count) {
@@ -46,16 +47,18 @@ public class LeaderboardService {
                 zSetOperations.reverseRangeWithScores(leaderboardKey, 0, count - 1);
 
         List<TopScoreDTO> topScores = new ArrayList<>();
-        topPlayersWithScores.forEach(tuple ->
-                topScores.add(new TopScoreDTO(tuple.getValue(), tuple.getScore().intValue())));
+        if (topPlayersWithScores != null) {
+            topPlayersWithScores.forEach(tuple ->
+                    topScores.add(new TopScoreDTO(tuple.getValue(), tuple.getScore().intValue())));
+        }
 
         return topScores;
     }
-    
-    public void incrementUserScore(String userId, double incrementValue) {
+
+    public void incrementUserScore(String userId, String username, double incrementValue) {
         String leaderboardKey = "leaderboard";
-        zSetOperations.incrementScore(leaderboardKey, userId, incrementValue);
+        zSetOperations.incrementScore(leaderboardKey, userId + ":" + username, incrementValue);
     }
-    
+
     // Other leaderboard operations (e.g., get scores, remove members, etc.)
 }

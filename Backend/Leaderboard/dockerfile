@@ -1,0 +1,20 @@
+# Use Amazon Corretto 17 as the base image
+FROM amazoncorretto:17
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy the entire project into the container
+COPY . .
+
+# Install Maven
+RUN yum install -y maven
+
+# Build the project using Maven
+RUN mvn clean package
+
+# Expose the correct application port (8011)
+EXPOSE 8011
+
+# Run the packaged JAR file
+CMD ["sh", "-c", "java -jar target/*.jar"]
