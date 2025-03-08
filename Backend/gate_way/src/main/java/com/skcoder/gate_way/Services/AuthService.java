@@ -1,6 +1,7 @@
 package com.skcoder.gate_way.Services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -22,8 +23,11 @@ public class AuthService {
     
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     
-    String urlString = "http://localhost:8012/users/add";  // ✅ Add "http://"
-
+    @Value("${user.baseurl}")
+    String baseurl;
+    
+    
+    String leaderboardUrl="http://localhost:8011/leaderboard/add";
 
     public Mono<User> getUserByUsername(String username, String provider) {
         return userRepository.findByUsernameAndProvider(username, provider);
@@ -38,10 +42,10 @@ public class AuthService {
             "GITHUB", "gh",
             "GOOGLE", "google"
         );
-
+        String urlString = baseurl+"/users/add";  
         Dto dto = new Dto(username);
 
-        // Call the API non-blocking and return a Mono<String>
+      
         Mono<String> userIdMono = webClient.post()
                 .uri(urlString)
                 .bodyValue(dto)
@@ -49,7 +53,7 @@ public class AuthService {
                 .bodyToMono(String.class)
                 .onErrorResume(error -> {
                     System.err.println("Failed to create user: " + error.getMessage());
-                    return Mono.empty(); // Return empty to avoid null errors
+                    return Mono.empty(); 
                 });
 
         String providerSuffix = providerShortcuts.getOrDefault(provider.toUpperCase(), provider.toLowerCase());
@@ -67,7 +71,14 @@ public class AuthService {
                     user.setProvider(provider);
                     user.setEmail(email);
                     user.setRole("USER");
-
+//also execute the leaderboard url it takes two param userId and username
+//                    webClient.post()
+//                    .uri(leaderboardUrl)
+//                    .bodyValue(Map.of("userId", user_id, "username", formattedUsername))
+//                    .retrieve()
+//                    .bodyToMono(Void.class)
+//                    .doOnError(error -> System.err.println("Failed to update leaderboard: " + error.getMessage()))
+//                    .subscribe(); // Execute without blocking
                     return userRepository.save(user);
                 })
             );

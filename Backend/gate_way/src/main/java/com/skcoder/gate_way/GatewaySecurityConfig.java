@@ -28,7 +28,7 @@ public class GatewaySecurityConfig {
             if (path.equals("/Algomania/problem/filter")) {
             	System.out.println("invoked");
                 String token = extractTokenFromCookie(exchange);
-                if (token != null) {
+                if (token != null && jwtService.validateToken(token)) {
                     Map<String, Object> claims = jwtService.extractAllClaims(token);
                     if (claims.containsKey("userId")) {
                         String userId = String.valueOf(claims.get("userId"));
