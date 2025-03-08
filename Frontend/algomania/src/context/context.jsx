@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
-
+import { BASE_URL } from "../constant"; 
 // Create Auth Context
 const AuthContext = createContext(null);
 
@@ -12,7 +12,7 @@ export const AuthProvider = ({ children }) => {
         console.log("🔄 Checking authentication status...");
 
         try {
-            const response = await axios.get("http://localhost:8000/authv1/test", {
+            const response = await axios.get(`${BASE_URL}/authv1/test`, {
                 withCredentials: true, // Ensures cookies are sent with the request
             });
 
