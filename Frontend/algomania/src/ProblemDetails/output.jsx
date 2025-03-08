@@ -1,8 +1,7 @@
-import React from 'react';
+import React from "react";
 import { MdCancel } from "react-icons/md";
 
 const Output = ({ setDropdownOpen, response }) => {
-
   const handleOnClick = () => {
     setDropdownOpen(false); // Close the dropdown or hide the Output component
   };
@@ -18,26 +17,43 @@ const Output = ({ setDropdownOpen, response }) => {
 
       {/* Output content */}
       <div className="mt-4">
-        <div className="text-lg font-semibold">
-          <span className="text-purple-600 transition-colors duration-300">Status:</span> {response.isAccepted ? (
-            <span className="text-green-600">Accepted</span>
-          ) : (
-            <span className="text-red-600">Not Accepted</span>
-          )}
-        </div>
+        {response.accepted ? (
+          // Show a green check if accepted
+          <div className="text-green-600 text-lg font-semibold">✅ It works!</div>
+        ) : response.error ? (
+          // Show response if there is an error
+          <div className="mt-4">
+            <textarea
+              className="w-full p-3 border border-red-600 text-red-600 rounded-md bg-red-50"
+              rows={6}
+              value={response.response}
+              readOnly
+            />
+          </div>
+        ) : (
+          // Show expected vs. response if not accepted and no error
+          <div className="mt-4">
+            <div className="text-lg font-semibold">
+              <span className="text-purple-600">Expected:</span>
+            </div>
+            <textarea
+              className="w-full p-3 border border-gray-300 rounded-md bg-gray-50"
+              rows={4}
+              value={response.expected}
+              readOnly
+            />
+            <div className="text-lg font-semibold mt-2">
+              <span className="text-red-600">Your Output:</span>
+            </div>
+            <textarea
+              className="w-full p-3 border border-red-600 rounded-md bg-red-50"
+              rows={4}
+              value={response.response}
+              readOnly
+            />
+          </div>
+        )}
       </div>
-
-      {/* Error message textarea */}
-      {response.isError && (
-        <div className="mt-4">
-          <textarea
-            className="w-full p-3 border border-red-600 text-red-600 rounded-md bg-red-50"
-            rows={6} // Set to a good length, adjust as necessary
-            value={response.error}
-            readOnly
-          />
-        </div>
-      )}
     </div>
   );
 };

@@ -3,10 +3,12 @@ import DifficultyService from '../Services/DifficultyService';
 import CategoryService from '../Services/Categoryservice';
 import ProblemCard from './ProblemCard';
 import axios from 'axios';
-import InfiniteScroll from 'react-infinite-scroll-component';
+
 import { useAuth } from '../context/context';
 
-const BASE_URL = 'http://localhost:8000/Algomania/problem/filter';
+import { BASE_URL } from '../constant';
+
+const newUrl = BASE_URL+'/Algomania/problem/filter';
 
 const DisplayProblem = ({ selectedCategoryIds, selectedDifficultyIds, solved }) => {
   const [difficulties, setDifficulties] = useState({});
@@ -57,7 +59,7 @@ const DisplayProblem = ({ selectedCategoryIds, selectedDifficultyIds, solved }) 
       console.log(solved)
 
       try {
-        const response = await axios.post(BASE_URL, {
+        const response = await axios.post(newUrl, {
           difficultyIds: selectedDifficultyIds,
           categoryIds: selectedCategoryIds,
           solved: solved,

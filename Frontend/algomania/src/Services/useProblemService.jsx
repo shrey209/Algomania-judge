@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { BASE_URL } from "../constant"; 
+
 
 const useProblemService = () => {
   const [problems, setProblems] = useState([]);
@@ -15,6 +17,7 @@ const useProblemService = () => {
       try {
         const response = await axios.get(`http://localhost:8000/Algomania/problem/page?page=${page}&size=${defaultSize}`);
         const data = response.data;
+        console.log(BASE_URL)
         setProblems(prevProblems => [...prevProblems, ...data.content]);
         setHasMore(!data.last); 
       } catch (error) {

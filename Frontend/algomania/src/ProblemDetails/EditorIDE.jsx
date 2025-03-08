@@ -3,16 +3,18 @@ import AceEditor from 'react-ace';
 import { IoIosArrowDropup, IoIosArrowDropdown } from 'react-icons/io'; 
 import Output from './output'; // Import your Output component
 // Import AceEditor modes and theme
+import axios from "axios";
 import 'ace-builds/src-noconflict/mode-c_cpp';
 import 'ace-builds/src-noconflict/mode-python';
 import 'ace-builds/src-noconflict/theme-monokai';
+import { BASE_URL } from "../constant";
 
 const EditorIDE = ({ problemDetailsId }) => {
-  const [selectedLang, setSelectedLang] = useState('cpp');
+  const [selectedLang, setSelectedLang] = useState('C++');
   const [code, setCode] = useState('');
   const [isLoading, setLoading] = useState(false);
   const [isDropdownOpen, setDropdownOpen] = useState(false); 
-  const [response, setResponse] = useState({}); // Initial state based on SubmitCodeResponse structure
+  const [response, setResponse] = useState({}); 
 
   const renderButtonContent = () => {
     if (isLoading) {
@@ -33,45 +35,28 @@ const EditorIDE = ({ problemDetailsId }) => {
     setSelectedLang(e.target.value);
   };
 
-  const handleRun = () => {
+  const handleRun = async () => {
     setLoading(true);
-    
-    const data = {
-      userid: "66712d741802481c4320d326",  
-      code: code,
-      lang: selectedLang,
-      problemId: problemDetailsId  
-    };
-
-    const jsonData = JSON.stringify(data);
-
-    const socket = new WebSocket('ws://localhost:9001/submit');
-
-    socket.onopen = () => {
-      console.log('Connected to the WebSocket server.');
-      socket.send(jsonData);
-    };
-
-    socket.onerror = (error) => {
-      console.error('WebSocket Error:', error);
-      setLoading(false); 
-    };
-
-    socket.onmessage = (event) => {
-      console.log('Message from server:', event.data);
-      try {
-        const parsedData = JSON.parse(event.data); // Parse JSON data
-        setResponse(parsedData); // Update response state with parsed data
-        setDropdownOpen(true);
-      } catch (error) {
-        console.error('Error parsing JSON:', error);
-      }
-    };
-
-    socket.onclose = () => {
-      console.log('WebSocket connection closed.');
-      setLoading(false); 
-    };
+  
+    try {
+      const payload = {
+        problem_id: problemDetailsId, // Ensure problemDetailsId is passed as a prop
+        code: code,
+        lang: selectedLang === "cpp" ? "C++" : "Python", // Convert to correct format
+      };
+      console.log(payload)
+      const response = await axios.post(`${BASE_URL}/Algomania/Execute/code`, payload, {
+        headers: { "Content-Type": "application/json" }, // Ensure JSON format
+      });
+  
+      setResponse(response.data); 
+      console.log(response.data);
+      setDropdownOpen(true);
+    } catch (error) {
+      console.error("Execution failed:", error);
+    }
+  
+    setLoading(false);
   };
 
   const toggleDropdown = () => {
@@ -107,7 +92,7 @@ const EditorIDE = ({ problemDetailsId }) => {
           height="500px"
           value={code}
           onChange={setCode}
-          placeholder={`Write your ${selectedLang === 'cpp' ? 'C++' : 'Python'} code here...`}
+          placeholder={`Write your ${selectedLang === 'C++' ? 'C++' : 'Python'} code here...`}
           setOptions={{
             enableBasicAutocompletion: true,
             enableLiveAutocompletion: true,

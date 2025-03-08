@@ -1,6 +1,8 @@
 import axios from 'axios';
+import { BASE_URL } from "../constant"; 
 
-const Base_URL = 'http://localhost:8000/Algomania/ProblemDetails'; 
+
+const Base_URL = BASE_URL+'/Algomania/ProblemDetails'; 
 
 const getProblemDetailsById = async (id) => {
   // Parse the id to an integer

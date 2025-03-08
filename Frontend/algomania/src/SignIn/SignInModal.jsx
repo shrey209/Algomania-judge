@@ -1,5 +1,6 @@
 import React from 'react';
 import { X, Github, Chrome } from 'lucide-react';
+import { BASE_URL } from "../constant"; 
 
 function SignInModal({ isOpen, onClose }) {
   if (!isOpen) return null;
@@ -7,7 +8,7 @@ function SignInModal({ isOpen, onClose }) {
 
   const handleGithubSignIn = () => {
     window.location.href = `https://github.com/login/oauth/authorize?client_id=Ov23li4s00ZjAYcdwaGD&redirect_uri=${encodeURIComponent(
-        "http://localhost:8000/auth/github/callback"
+        BASE_URL+"/auth/github/callback"
       )}&scope=user:email`;
   };
 
@@ -16,7 +17,7 @@ function SignInModal({ isOpen, onClose }) {
     const state = encodeURIComponent(currentPath);
   console.log(currentPath)
     window.location.href = `https://accounts.google.com/o/oauth2/auth?client_id=233826009158-r0qpugemh5dd8jkke6n8uer1ajqr1m7u.apps.googleusercontent.com&redirect_uri=${encodeURIComponent(
-      "http://localhost:8000/auth/google/callback"
+      BASE_URL+"/auth/google/callback"
     )}&response_type=code&scope=openid%20email%20profile&state=${state}`;
   };
 
