@@ -14,10 +14,6 @@ public class ProblemsFilterDTO {
 	  private List<Integer> difficultyIds;
 	    private List<Integer> categoryIds;
 	   private boolean solved;
-	   private String userId;
 	    private int page;
 	    
-	    
-	
-	
 }

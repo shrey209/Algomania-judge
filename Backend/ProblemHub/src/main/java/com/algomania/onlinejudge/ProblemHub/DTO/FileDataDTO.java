@@ -12,6 +12,4 @@ import lombok.NoArgsConstructor;
 public class FileDataDTO {
 	private String inputfiledataBase64;
     private String outputfiledataBase64;
-
-    
 }

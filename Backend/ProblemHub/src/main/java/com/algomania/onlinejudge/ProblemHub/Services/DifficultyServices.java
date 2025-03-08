@@ -31,6 +31,9 @@ public class DifficultyServices {
 		return difficultyRepository.findBylevel(level);
 	}
 	
+	public List<Difficulty> addDifficulties(List<Difficulty> difficulties) {
+		return difficultyRepository.saveAll(difficulties);
+	}
 	// increment the counter 
 	 @Transactional
 	 public void incrementDifficultyCount(int id) {
@@ -45,6 +48,10 @@ public class DifficultyServices {
 	 //get All difficulty
 	 public List<Difficulty>getallDifficulties(){
 		 return difficultyRepository.findAll();
+	 }
+	 @Transactional
+	 public void deleteDifficultyById(int id) {
+	     difficultyRepository.deleteById(id);
 	 }
 	
 }

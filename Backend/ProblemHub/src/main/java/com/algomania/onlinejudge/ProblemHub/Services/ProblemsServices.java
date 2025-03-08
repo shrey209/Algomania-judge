@@ -58,7 +58,7 @@ public class ProblemsServices {
         Pageable pageable = PageRequest.of(page - 1, DEFAULT_PAGE_SIZE);
         
         if(isSolved==true) {
-        	 String url = "http://localhost:8010/users/{userId}/problems";
+        	 String url = "http://localhost:8012/users/{userId}/problems";
         	  RestTemplate restTemplate = new RestTemplate();
         	  List<Integer> problemIdsList = restTemplate.getForObject(url, List.class, userId);
         	  System.out.println("Response: " + problemIdsList);

@@ -4,8 +4,11 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -48,6 +51,17 @@ public class DifficultyController {
         List<Difficulty> difficulties = difficultyServices.getallDifficulties();
         return new ResponseEntity<>(difficulties, HttpStatus.OK);
     }
+    
+    @Operation(summary = "Add a list of difficulties", description = "Saves a list of difficulties to the database")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "201", description = "Difficulties added successfully"),
+        @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @PostMapping("/addDifficulties")
+    public ResponseEntity<List<Difficulty>> addDifficulties(@RequestBody List<Difficulty> difficulties) {
+        List<Difficulty> savedDifficulties = difficultyServices.addDifficulties(difficulties);
+        return new ResponseEntity<>(savedDifficulties, HttpStatus.CREATED);
+    }
 
     @Operation(summary = "Get difficulty count by ID", description = "Fetches the count of a difficulty by its ID")
     @ApiResponses(value = {
@@ -61,5 +75,12 @@ public class DifficultyController {
         @RequestParam int id) {
         int count = difficultyServices.getDifficultyCount(id);
         return new ResponseEntity<>(count, HttpStatus.OK);
+    }
+    
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteDifficulty(@PathVariable int id) {
+        difficultyServices.deleteDifficultyById(id);
+        return ResponseEntity.ok("Difficulty with ID " + id + " deleted successfully.");
     }
 }

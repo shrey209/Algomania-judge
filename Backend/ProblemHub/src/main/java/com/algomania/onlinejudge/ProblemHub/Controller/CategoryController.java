@@ -62,4 +62,11 @@ public class CategoryController {
         int count = categoryServices.getcountById(id);
         return new ResponseEntity<>(count, HttpStatus.OK);
     }
+    
+    @PostMapping("/addCategories")
+    public ResponseEntity<List<Category>> addCategories(@RequestBody List<Category> categories) {
+        List<Category> savedCategories = categoryServices.addCategories(categories);
+        return new ResponseEntity<>(savedCategories, HttpStatus.CREATED);
+    }
+
 }

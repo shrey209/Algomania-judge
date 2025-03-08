@@ -46,5 +46,11 @@ public class CategoryServices {
        return categoryRepository.findAll();
    }
 	
+// Add multiple categories
+   public List<Category> addCategories(List<Category> categories) {
+	    return categoryRepository.saveAll(categories);
+	}
+
+
 	
 }

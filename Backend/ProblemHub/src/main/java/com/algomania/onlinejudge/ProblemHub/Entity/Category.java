@@ -23,7 +23,7 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int Id;
 
-    @Column(length = 20)
+    @Column(length = 40)
     private String type;
 
     private int count;
