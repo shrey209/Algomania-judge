@@ -7,6 +7,7 @@ import Leaderboard from './Leaderboard';
 import axios from 'axios';
 import Solved from './solved';
 
+import { BASE_URL } from "../constant"; 
 
 const Dashboard = () => {
   const [userinfo, setUserinfo] = useState(null);
@@ -15,7 +16,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/users/getuser", {
+        const response = await axios.get(`${BASE_URL}/users/getuser`, {
           withCredentials: true, // Include cookies in the request
         });
 
