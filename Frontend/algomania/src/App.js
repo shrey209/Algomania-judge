@@ -7,8 +7,9 @@ import Contest from './components/contest';
 import Home from './Home page/Home';
 import Editor from './Code Editor page/Editor';
 import ProblemDetails from './ProblemDetails/ProblemDetails';
-
 import Dashboard from './Dashboard/Dashboard';
+import Solution from './ProblemDetails/Solution'; // ✅ Import Solution component
+
 import { AuthProvider } from "./context/context";
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
           <Route path="/Editor" element={<Editor />} />
           <Route path="/problemDetails/:id" element={<ProblemDetails />} />
           <Route path="/Dashboard" element={<Dashboard />} />
+          <Route path="/solution/:solutionId" element={<Solution />} /> {/* ✅ Add this route */}
         </Routes>
       </AuthProvider>
     </BrowserRouter>

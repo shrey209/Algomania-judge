@@ -4,6 +4,7 @@ import getProblemDetailsById from '../Services/ProblemDetailService';
 import SampleTest from './SampleTest';
 import EditorIDE from './EditorIDE';
 import { LoadingSpinner } from '../components/Loading';
+import { useNavigate } from 'react-router-dom';
 
 
 const ProblemDetails = () => {
@@ -15,6 +16,7 @@ const ProblemDetails = () => {
   const [problemData, setProblemData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProblemData = async () => {
@@ -42,6 +44,13 @@ const ProblemDetails = () => {
   </div>
   }
 
+
+  function handleSolution(){
+    navigate(`/solution/${problemData.solutionId}`, {
+      state: { problemDetailsId, difficulty, category ,title}
+    });
+  }
+
   if (error) {
     return <div>Error: {error.message}</div>;
   }
@@ -64,7 +73,7 @@ const ProblemDetails = () => {
     </div>
     <div className="p-4 flex justify-between items-center">
       <span className="text-xl font-semibold">Description:</span>
-      <button className="bg-blue-500 text-white px-4 py-2 rounded shadow-sm hover:bg-blue-600">
+      <button className="bg-blue-500 text-white px-4 py-2 rounded shadow-sm hover:bg-blue-600" onClick={handleSolution}>
         Solution
       </button>
     </div>
