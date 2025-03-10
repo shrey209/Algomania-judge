@@ -3,7 +3,7 @@ import { useParams, useLocation } from 'react-router-dom';
 import getProblemDetailsById from '../Services/ProblemDetailService';
 import SampleTest from './SampleTest';
 import EditorIDE from './EditorIDE';
-
+import { LoadingSpinner } from '../components/Loading';
 
 
 const ProblemDetails = () => {
@@ -35,7 +35,11 @@ const ProblemDetails = () => {
   }, [problemDetailsId]);
 
   if (loading) {
-    return <div>Fetching data...</div>;
+    return   <div className="min-h-screen bg-gradient-to-br from-purple-50 to-white flex items-center justify-center">
+    <div className="bg-white p-8 rounded-xl shadow-lg border border-purple-100">
+      <LoadingSpinner />
+    </div>
+  </div>
   }
 
   if (error) {
